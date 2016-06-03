@@ -1,0 +1,226 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+	<title> FredPrompt 1.0 </title>
+	<script type="text/javascript">
+	//percent2px: (c) 2015 Frederik Dunschen
+/*
+Syntax:
+pxx = percent2absolute_top(8);
+pxy = percent2absolute_left(5);
+document.getElementById("imp").style.top = pxx + "px";
+document.getElementById("imp").style.left = pxy + "px";
+*/
+
+var winHeight = "innerHeight" in window 
+               ? window.innerHeight
+               : document.documentElement.offsetHeight;
+               
+  
+	function percent2absolute_top(percent) {
+		var px = (winHeight*2/100)+document.getElementById("hea").clientHeight+(winHeight*percent/100)+12; 
+		return px;
+	}
+	function percent2absolute_left(percent) {
+		var px = document.body.clientWidth*percent/100;
+		return px;
+	}
+	function percent2height(percent) {
+		var px = winHeight*percent/100;
+		return px;
+	}
+	function percent2width(percent) {
+		var px = document.body.clientWidth*percent/100;
+		return px;
+	}
+	function percent2font_size(px) {
+		var gheight, cheight, val;
+		gheight = 740;
+		cheight = winHeight;
+		val = cheight / gheight;
+		return px*val;
+	}	
+
+	</script>
+</head>
+<body>
+<!--Fredprompt (c)2015 Frederik Dunschen -->
+<center>
+<style>
+	.teksti {font-family:Arial;color;font-weight:700;font-size:70px;color:#FFFFFF;background-color:#000000;line-height:90px;text-align:left}
+	.control{font-family:Verdana,Helvetica,sans-serif;font-size:9px;color:#FFFFFF;background-color:#666666;padding:1px;}
+	.copy {font-family:Verdana,Helvetica,sans-seriffont-size:9px;color:#FFFFFF;background-color:#000000;}
+	td.vali {background-color:#000000;font-family:Verdana,Helvetica,sans-seriffont-size:8px;color:#CCCCCC;text-indent:40px;}
+	a.control{font-family:Verdana,Helvetica,sans-serif;font-weight:900;color:#FFFFFF;font-size:12px;color;background-color:#666666;text-decoration:underline;}
+	.stcontrol{font-family:Verdana,Helvetica,sans-serif;font-weight:900;font-size:12px;color:#FF0000;background-color:#666666;text-decoration:underline;}
+	body {background-color:#000000;}
+.fixed {
+    position: fixed;
+    bottom: 0;
+    margin-left: auto ;
+  margin-right: auto ;
+}
+</style>
+
+<div id="container" style="position:relative;overflow:hidden;border:0px">
+	<div id="content" style="position:relative;left:0;top:0">
+		<table style="border-style: solid;border-color: #000000; border-left-color: #ff0000" cellpadding="8" cellspacing="0" id="tbl">
+			<tbody><tr>
+				<td id="prom" class="teksti">
+						
+				</td>
+			</tr>
+		</tbody></table>
+	</div>
+</div>
+
+<table bgcolor="#666666" border="0" cellpadding="0" cellspacing="0" class="fixed">
+	<tbody><tr>
+		<td class="control">
+			<a href="javascript:pgup()" class="control">Nach Oben^</a>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<!--<a href="javascript:rverse()" class="control">&lt;--</a>&nbsp;-->
+			<a href="javascript:stop()" class="control">STOPP</a>&nbsp;
+			<a href="javascript:fward()" class="control">START</a>		
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="range" min="1" max="100" step="5" value=30 onchange="document.getElementById('container').style.height = percent2height(this.value)*1.5;">
+		</td>
+	</tr>
+	<tr>
+	<td>
+	<form method="post" action="index.php?save=1">
+	<textarea cols=174 rows=3 id="text" name="text" oninput="change();">Promptertext</textarea>
+	</form>
+	</td>
+	</tr>
+</tbody></table>
+
+
+<script type="text/javascript">
+var step=1;
+var scspeed = 20;
+var status = 1;
+var keycode;
+var spind = 4;
+document.onkeydown = checkKeycode
+
+
+function checkKeycode(e) {
+if (window.event) keycode = window.event.keyCode;
+else if (e) keycode = e.which;
+
+switch (keycode){
+
+	case 112 : 
+		if (status == 2 || status == 3) {
+		stop()
+		break;
+		};
+		if (status == 1) {
+		fward()
+		break;
+		};
+	}
+}
+
+
+document.write('</div></div>')
+var contentobj=document.getElementById? document.getElementById("content") : document.all.content
+var contentheight=contentobj.offsetHeight
+if (document.getElementById&&!document.all){
+  		step=1
+}
+
+function fward() {
+	status = 2
+	if(window.scrolltimerup){
+		clearTimeout(scrolltimerup)
+	}
+	if(parseInt(contentobj.style.top)>=(contentheight*(-1)+300)){
+		contentobj.style.top=parseInt(contentobj.style.top)-step
+	}
+	scrolltimerdown = setTimeout("fward()",scspeed)
+}
+
+function rverse() {
+	status = 3
+	if(window.scrolltimerdown){
+		clearTimeout(scrolltimerdown)
+	}
+	if(parseInt(contentobj.style.top)<=0){
+		contentobj.style.top=parseInt(contentobj.style.top)+5
+	}
+	scrolltimerup = setTimeout("rverse()",scspeed)	
+}
+
+function stop() {
+	status = 1
+	if(window.scrolltimerup){
+		clearTimeout(scrolltimerup)
+	}
+	if(window.scrolltimerdown){
+		clearTimeout(scrolltimerdown)
+	}
+}
+
+function pgup(){
+	status = 1
+	stop()
+	contentobj.style.top=100
+}
+
+function getcontent_height(){
+	contentheight=contentobj.offsetHeight
+}
+
+function change() {
+	 var x=document.getElementById('tbl').rows
+    var y=x[0].cells
+    var text1=document.getElementById('text').value;
+    var carCount = text1.length;
+    var div=parseInt(carCount/30);
+    var i=1;
+    var preIndex = 0;
+    var finalString = "";
+    while ((i<=div) && (div!=0)) {
+    	 var index = 30*i;
+    	 var cha = "";
+		 while ((cha != " ") && (index > preIndex)) {
+			index--;	 
+			cha = text1.charAt(index);
+		 }
+		 var tmpTxt = "";
+		 while (preIndex < index) { 
+		 	var tmpTxt = tmpTxt + text1.charAt(preIndex);
+		 	preIndex++; 
+		 }
+		 finalString = finalString+tmpTxt+"<br>";
+		 i++;
+    }
+    if (div!=0) {
+    	while (index <= carCount) {
+    		finalString = finalString+text1.charAt(index);
+    		index++;
+    	}
+    }
+    else {
+    	finalString = text1;
+    }
+    y[0].innerHTML=finalString;
+    contentheight=contentobj.offsetHeight
+    if(pos) {
+    	pgup();
+    	pos=false;
+    }
+}
+           
+var pos=true;
+window.onload=change();
+
+document.getElementById("container").style.width = percent2width(95); + "px";
+document.getElementById("content").style.width = percent2width(95); + "px";
+
+document.getElementById("tbl").style.width = percent2width(95); + "px";
+</script>
+
+
+
+</center></body></html>
